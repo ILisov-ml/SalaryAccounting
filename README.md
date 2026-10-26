@@ -72,6 +72,11 @@ SalaryAccounting/
 │   └── diagrams/          # Диаграммы PlantUML
 ├── src/
 │   └── salary_accounting/ # Исходный код
+│       ├── database/      # Слой данных
+│       │   ├── __init__.py
+│       │   ├── schema.sql # Создание таблиц и тестовые данные
+│       │   ├── init_db.py # Скрипт создания базы данных
+│       │   └── salary.db  # Файл базы данных SQLite
 │       ├── __init__.py
 │       └── main.py        # Точка входа
 ├── tests/                 # Тесты
@@ -90,6 +95,8 @@ SalaryAccounting/
 | **GitHub**     | —                    | Хранение репозитория и совместная работа |
 | **Markdown**   | —                    | Оформление документации |
 | **PlantUML**   | плагин plantuml4idea | Построение диаграмм    |
+| **SQLite**     | встроена в Python (`sqlite3`) | База данных   |
+| **DB Browser for SQLite** | 3.13.1    | Просмотр базы данных   |
 
 
 
@@ -99,11 +106,54 @@ SalaryAccounting/
 
 - `usecase.puml` — диаграмма вариантов использования (Use Case)
 - `activity_salary.puml` — диаграмма активности «Ввод зарплаты и расчёт налога»
+- `er.puml` — ER-диаграмма базы данных
 
 
 ### Диаграмма ввод зарплаты и расчёт налога
 
 ![Ввод зарплаты и расчёт налога](docs/diagrams/activity_salary.png)
+
+
+## База данных
+
+В проекте используется база данных **SQLite**. Вся база хранится в одном файле `salary.db`,
+отдельный сервер не нужен.
+
+### ER-диаграмма
+
+![ER-диаграмма базы данных](docs/diagrams/er.png)
+
+### Таблицы
+
+| Таблица | Назначение | Ключи |
+|---------|------------|-------|
+| `roles` | Роли пользователей (Бухгалтер, Сотрудник) | PK `role_id` |
+| `users` | Логины и пароли для входа в систему | PK `user_id`, FK `role_id` |
+| `positions` | Должности и их оклады | PK `position_id` |
+| `employees` | Сотрудники | PK `employee_id`, FK `position_id`, FK `user_id` |
+| `salaries` | Начисления зарплаты по месяцам | PK `salary_id`, FK `employee_id` |
+
+### Связи
+
+- `roles` → `users` — **1:N** (у одной роли много пользователей)
+- `positions` → `employees` — **1:N** (одна должность у нескольких сотрудников)
+- `users` → `employees` — **1:1** (у каждого сотрудника свой логин)
+- `employees` → `salaries` — **1:N** (у сотрудника начисления за много месяцев)
+
+Сумма зарплаты хранится в `salaries` отдельно от оклада в `positions`, чтобы при изменении
+оклада не менялась история прошлых начислений.
+
+### Создание базы данных
+
+Таблицы и тестовые данные описаны в файле `src/salary_accounting/database/schema.sql`.
+Чтобы создать (или пересоздать) базу:
+
+```bash
+python src/salary_accounting/database/init_db.py
+```
+
+После запуска появится файл `src/salary_accounting/database/salary.db`.
+Посмотреть таблицы можно в программе [DB Browser for SQLite](https://sqlitebrowser.org/).
 
 
 ## Требования
