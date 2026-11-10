@@ -1,4 +1,4 @@
-from services.user_s1ervice import ACCOUNTANT_ROLE_ID, EMPLOYEE_ROLE_ID
+from services.user_service import ACCOUNTANT_ROLE_ID, EMPLOYEE_ROLE_ID
 from ui import auth, menu
 
 
