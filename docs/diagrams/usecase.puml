@@ -1,0 +1,44 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam packageStyle rectangle
+
+title Диаграмма системы «Учёт доходов и зарплат»
+
+actor "Бухгалтер" as Acc
+actor "Сотрудник" as Emp
+
+rectangle "Учёт доходов и зарплат" {
+    usecase "Войти в систему" as UC_Login
+
+    ' Функции бухгалтера
+    usecase "Добавить сотрудника" as UC_Add
+    usecase "Изменить или удалить\nсотрудника" as UC_Edit
+    usecase "Внести зарплату\nза месяц" as UC_Salary
+    usecase "Рассчитать налог\n(НДФЛ 13%)" as UC_Tax
+    usecase "Отметить выплату\nзарплаты" as UC_Pay
+    usecase "Посмотреть отчёт\nза месяц" as UC_Report
+
+    ' Функции сотрудника
+    usecase "Посмотреть свою\nзарплату" as UC_MySalary
+    usecase "Посмотреть историю\nвыплат" as UC_History
+}
+
+' Оба пользователя входят в систему
+Acc --> UC_Login
+Emp --> UC_Login
+
+' Бухгалтер
+Acc --> UC_Add
+Acc --> UC_Edit
+Acc --> UC_Salary
+Acc --> UC_Pay
+Acc --> UC_Report
+
+' Сотрудник
+Emp --> UC_MySalary
+Emp --> UC_History
+
+' При вводе зарплаты всегда рассчитывается налог
+UC_Salary ..> UC_Tax : <<include>>
+@enduml
