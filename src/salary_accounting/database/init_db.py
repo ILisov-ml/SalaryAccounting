@@ -8,7 +8,6 @@ DB_PATH = BASE_DIR / "salary.db"
 
 
 def init_db():
-    """Создаёт базу данных salary.db по скрипту schema.sql."""
     with open(SCHEMA_PATH, encoding="utf-8") as f:
         script = f.read()
 
