@@ -1,0 +1,47 @@
+@startuml
+!pragma layout smetana
+hide circle
+skinparam linetype ortho
+title ER-диаграмма базы данных «Учёт доходов и зарплат»
+entity "positions" as positions {
+  * position_id : INTEGER <<PK>>
+  --
+  * name : TEXT
+  * base_salary : REAL
+}
+entity "users" as users {
+  * user_id : INTEGER <<PK>>
+  --
+  * login : TEXT <<UNIQUE>>
+  * password : TEXT
+  * role_id : INTEGER <<FK>>
+}
+entity "employees" as employees {
+* employee_id:  INTEGER <<PK>>
+--
+* full_name: TEXT
+* position_id: INTEGER <<FK>>
+* user_id: INTEGER <<FK>> <<UNIQUE>>
+}
+
+entity "roles" as roles {
+* role_id: INTEGER <<PK>>
+--
+* name: TEXT
+}
+entity "salaries" as salaries {
+* salary_id: INTEGER <<PK>>
+--
+* employee_id: INTEGER <<FK>>
+* month: TEXT
+* amount: REAL
+* tax: REAL
+* payout: REAL
+* is_paid: INTEGER
+}
+roles ||--o{ users : "1:N"
+positions ||--o{ employees : "1:N"
+users ||--|| employees : "1:1"
+employees ||--o{ salaries : "1:N"
+
+@enduml
