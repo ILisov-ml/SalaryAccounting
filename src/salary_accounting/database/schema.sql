@@ -70,7 +70,7 @@ INSERT INTO positions (name, base_salary) VALUES
     ('Программист', 120000),
     ('Менеджер', 55000);
 
--- Пользователи (role_id: 1 = Бухгалтер, 2 = Сотрудник)
+-- Пользователи
 INSERT INTO users (login, password, role_id) VALUES
     ('ivanova', 'buh123', 1),
     ('petrov', 'pass123', 2),

@@ -72,11 +72,16 @@ SalaryAccounting/
 │   └── diagrams/          # Диаграммы PlantUML
 ├── src/
 │   └── salary_accounting/ # Исходный код
-│       ├── database/      # Слой данных
+│       ├── database/      # База данных
 │       │   ├── __init__.py
+│       │   ├── database.py # Подключение к базе (get_connection)
 │       │   ├── schema.sql # Создание таблиц и тестовые данные
 │       │   ├── init_db.py # Скрипт создания базы данных
 │       │   └── salary.db  # Файл базы данных SQLite
+│       ├── models/        # Модели данных (dataclass)
+│       ├── repositories/  # Слой данных: SQL-запросы, CRUD
+│       ├── services/      # Слой бизнес-логики: проверки, расчёт налога
+│       ├── ui/            # Слой интерфейса: консольное меню, вход и регистрация
 │       ├── __init__.py
 │       └── main.py        # Точка входа
 ├── tests/                 # Тесты
@@ -218,6 +223,13 @@ cd SalaryAccounting
 ```bash
 python src/salary_accounting/main.py
 ```
+
+### Тестовые пользователи
+
+| Логин | Пароль | Роль |
+|-------|--------|------|
+| ivanova | buh123 | Бухгалтер |
+| petrov | pass123 | Сотрудник |
 
 ### Запуск в PyCharm
 
