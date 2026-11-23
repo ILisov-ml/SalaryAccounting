@@ -1,0 +1,100 @@
+[
+  {
+    "employee_id": 1,
+    "full_name": "Иванова Анна Сергеевна",
+    "position": {
+      "position_id": 1,
+      "name": "Бухгалтер",
+      "base_salary": 70000.0
+    },
+    "user": {
+      "user_id": 1,
+      "login": "ivanova",
+      "role": "Бухгалтер"
+    }
+  },
+  {
+    "employee_id": 2,
+    "full_name": "Петров Игорь Николаевич",
+    "position": {
+      "position_id": 2,
+      "name": "Программист",
+      "base_salary": 120000.0
+    },
+    "user": {
+      "user_id": 2,
+      "login": "petrov",
+      "role": "Сотрудник"
+    }
+  },
+  {
+    "employee_id": 3,
+    "full_name": "Сидорова Мария Павловна",
+    "position": {
+      "position_id": 3,
+      "name": "Менеджер",
+      "base_salary": 55000.0
+    },
+    "user": {
+      "user_id": 3,
+      "login": "sidorova",
+      "role": "Сотрудник"
+    }
+  },
+  {
+    "employee_id": 4,
+    "full_name": "Кузнецов Олег Дмитриевич",
+    "position": {
+      "position_id": 2,
+      "name": "Программист",
+      "base_salary": 120000.0
+    },
+    "user": {
+      "user_id": 4,
+      "login": "kuznetsov",
+      "role": "Сотрудник"
+    }
+  },
+  {
+    "employee_id": 5,
+    "full_name": "qwerty",
+    "position": {
+      "position_id": 3,
+      "name": "Менеджер",
+      "base_salary": 55000.0
+    },
+    "user": {
+      "user_id": 5,
+      "login": "qwerty",
+      "role": "Сотрудник"
+    }
+  },
+  {
+    "employee_id": 7,
+    "full_name": "zxcvbn",
+    "position": {
+      "position_id": 2,
+      "name": "Программист",
+      "base_salary": 120000.0
+    },
+    "user": {
+      "user_id": 7,
+      "login": "zxcvbn",
+      "role": "Сотрудник"
+    }
+  },
+  {
+    "employee_id": 8,
+    "full_name": "asdfghj",
+    "position": {
+      "position_id": 3,
+      "name": "Менеджер",
+      "base_salary": 55000.0
+    },
+    "user": {
+      "user_id": 8,
+      "login": "asdfghj",
+      "role": "Сотрудник"
+    }
+  }
+]

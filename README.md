@@ -26,10 +26,12 @@
 ### Функции бухгалтера
 
 1. Вход в систему с помощью логина и пароля
-2. Добавление, изменение и удаление сотрудников
-3. Ввод зарплаты сотрудников за месяц
-4. Отметка о выданной зарплате
-5. Просмотр отчёта за месяц
+2. Утверждение должности и прав новых зарегистрированных пользователей
+3. Добавление, перевод и удаление сотрудников (включая удаление с историей после выгрузки таблицы)
+4. Управление должностями и окладами
+5. Ввод зарплаты сотрудников за месяц (индивидуально или всем по окладу)
+6. Отметка о выданной зарплате и просмотр отчёта за месяц
+7. Экспорт таблицы сотрудников (`employees` со связями) в **JSON, CSV, XML, YAML**
 
 ### Функции сотрудника
 
@@ -69,22 +71,36 @@
 ```text
 SalaryAccounting/
 ├── docs/
-│   └── diagrams/          # Диаграммы PlantUML
+│   └── diagrams/               # Диаграммы PlantUML
+├── frontend/                   # Веб-интерфейс (HTML, CSS, JS)
+│   ├── index.html
+│   ├── styles.css
+│   ├── api.js                  # API-адаптер к FastAPI
+│   └── app.js
+├── out/                        # Выгрузка данных (создаётся автоматически при запуске export.py)
+│   ├── data.json
+│   ├── data.csv
+│   ├── data.xml
+│   └── data.yaml
 ├── src/
-│   └── salary_accounting/ # Исходный код
-│       ├── database/      # База данных
+│   └── salary_accounting/      # Исходный код
+│       ├── database/           # База данных
 │       │   ├── __init__.py
-│       │   ├── database.py # Подключение к базе (get_connection)
-│       │   ├── schema.sql # Создание таблиц и тестовые данные
-│       │   ├── init_db.py # Скрипт создания базы данных
-│       │   └── salary.db  # Файл базы данных SQLite
-│       ├── models/        # Модели данных (dataclass)
-│       ├── repositories/  # Слой данных: SQL-запросы, CRUD
-│       ├── services/      # Слой бизнес-логики: проверки, расчёт налога
-│       ├── ui/            # Слой интерфейса: консольное меню, вход и регистрация
+│       │   ├── database.py     # Подключение к базе (get_connection)
+│       │   ├── schema.sql      # Создание таблиц и тестовые данные
+│       │   ├── init_db.py      # Скрипт создания базы данных
+│       │   └── salary.db       # Файл базы данных SQLite
+│       ├── models/             # Модели данных (dataclass)
+│       ├── repositories/       # Слой данных: SQL-запросы, CRUD
+│       ├── services/           # Слой бизнес-логики: проверки, расчёт налога, экспорт
+│       │   └── export_service.py
+│       ├── ui/                 # Консольный интерфейс
 │       ├── __init__.py
-│       └── main.py        # Точка входа
-├── tests/                 # Тесты
+│       ├── export.py           # Скрипт выгрузки employees в out/ (JSON, CSV, XML, YAML)
+│       ├── main.py             # Точка входа (консольная версия)
+│       └── web.py              # Точка входа (веб-сервер FastAPI + фронтенд)
+├── tests/                      # Тесты
+├── requirements.txt            # Зависимости проекта (FastAPI, Uvicorn, PyYAML)
 ├── .gitignore
 └── README.md
 ```
@@ -101,6 +117,9 @@ SalaryAccounting/
 | **Markdown**   | —                    | Оформление документации |
 | **PlantUML**   | плагин plantuml4idea | Построение диаграмм    |
 | **SQLite**     | встроена в Python (`sqlite3`) | База данных   |
+| **FastAPI + Uvicorn** | `fastapi`, `uvicorn` | Веб-сервер и REST API |
+| **HTML / CSS / JS** | —               | Веб-интерфейс (`frontend/`) |
+| **PyYAML**     | `pyyaml`             | Экспорт данных в формат YAML |
 | **DB Browser for SQLite** | 3.13.1    | Просмотр базы данных   |
 
 
@@ -161,6 +180,14 @@ python src/salary_accounting/database/init_db.py
 Посмотреть таблицы можно в программе [DB Browser for SQLite](https://sqlitebrowser.org/).
 
 
+## Экспорт данных (JSON, CSV, XML, YAML)
+
+В системе реализована выгрузка таблицы `employees` вместе со связанными данными (`positions`, `users`, `roles`) в 4 форматах:
+
+- **Через веб-интерфейс** — доступно только бухгалтеру на вкладке **Сотрудники** (скачивание файла прямо в браузер).
+- **Через Python-скрипт** (`src/salary_accounting/export.py`) — автоматически создаёт папку `out/` в корне проекта и сохраняет туда `data.json`, `data.csv`, `data.xml` и `data.yaml`.
+
+
 ## Требования
 
 ### Для запуска проекта необходимо установить:
@@ -168,7 +195,13 @@ python src/salary_accounting/database/init_db.py
 - **Python 3.10** или новее — [Скачать](https://www.python.org/downloads/)
 - **Git** — для клонирования репозитория — [Скачать](https://git-scm.com/downloads)
 
-Сторонние библиотеки не требуются
+### Установка зависимостей (для веб-версии и YAML-экспорта):
+
+```bash
+pip install -r requirements.txt
+```
+
+> Для запуска только консольной версии (`main.py`) сторонние библиотеки не требуются.
 
 
 
@@ -218,10 +251,30 @@ git clone https://github.com/ILisov-ml/SalaryAccounting.git
 cd SalaryAccounting
 ```
 
-### 2. Запуск программы
+### 2. Установка зависимостей
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Запуск веб-версии (рекомендуется)
+
+```bash
+python src/salary_accounting/web.py
+```
+
+Сервер запустится на `http://127.0.0.1:8000` и автоматически откроет браузер.
+
+### 4. Запуск консольной версии
 
 ```bash
 python src/salary_accounting/main.py
+```
+
+### 5. Выгрузка данных в папку `out/` (JSON, CSV, XML, YAML)
+
+```bash
+python src/salary_accounting/export.py
 ```
 
 ### Тестовые пользователи
@@ -234,5 +287,6 @@ python src/salary_accounting/main.py
 ### Запуск в PyCharm
 
 1. Открыть папку проекта: **File -> Open** → `SalaryAccounting`
-2. Открыть файл `src/salary_accounting/main.py`
-3. Нажать правой кнопкой мыши по файлу -> **Run main** 
+2. Для веб-интерфейса открыть `src/salary_accounting/web.py` → правой кнопкой мыши → **Run 'web'**
+3. Для консольной версии открыть `src/salary_accounting/main.py` → правой кнопкой мыши → **Run 'main'**
+4. Для выгрузки в `out/` открыть `src/salary_accounting/export.py` → правой кнопкой мыши → **Run 'export'** 

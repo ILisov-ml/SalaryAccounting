@@ -1,0 +1,8 @@
+﻿employee_id,full_name,position.position_id,position.name,position.base_salary,user.user_id,user.login,user.role
+1,Иванова Анна Сергеевна,1,Бухгалтер,70000.0,1,ivanova,Бухгалтер
+2,Петров Игорь Николаевич,2,Программист,120000.0,2,petrov,Сотрудник
+3,Сидорова Мария Павловна,3,Менеджер,55000.0,3,sidorova,Сотрудник
+4,Кузнецов Олег Дмитриевич,2,Программист,120000.0,4,kuznetsov,Сотрудник
+5,qwerty,3,Менеджер,55000.0,5,qwerty,Сотрудник
+7,zxcvbn,2,Программист,120000.0,7,zxcvbn,Сотрудник
+8,asdfghj,3,Менеджер,55000.0,8,asdfghj,Сотрудник
