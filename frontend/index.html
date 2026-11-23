@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SalaryAccounting — Учёт доходов и зарплат</title>
+  <meta name="description" content="Система учёта зарплат SalaryAccounting: начисления, расчёт НДФЛ 13%, отчёты за месяц и личный кабинет сотрудника.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Экран авторизации / регистрации -->
+  <div id="auth-screen" class="auth-shell">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <span class="brand-title">SalaryAccounting</span>
+          <span class="brand-sub mono">01 · УЧЁТ ДОХОДОВ И ЗАРПЛАТ</span>
+        </div>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Вход или регистрация">
+        <button type="button" class="auth-tab is-active" data-auth-tab="login" role="tab" aria-selected="true">Вход</button>
+        <button type="button" class="auth-tab" data-auth-tab="register" role="tab" aria-selected="false">Регистрация</button>
+      </div>
+
+      <!-- Форма входа -->
+      <form id="login-form" class="auth-form" novalidate>
+        <div class="field">
+          <label for="login-username">Логин</label>
+          <input id="login-username" name="login" type="text" required autocomplete="username" placeholder="ivanova" data-error="login-username-err">
+          <div id="login-username-err" class="error-msg">Введите логин</div>
+        </div>
+        <div class="field">
+          <label for="login-password">Пароль</label>
+          <input id="login-password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" data-error="login-password-err">
+          <div id="login-password-err" class="error-msg">Введите пароль</div>
+        </div>
+        <div id="login-server-error" class="form-alert" hidden></div>
+        <button type="submit" class="btn btn-primary btn-full">Войти в систему</button>
+
+        <div class="demo-creds">
+          <span class="demo-label mono">БЫСТРЫЙ ВХОД · SCHEMA.SQL</span>
+          <div class="demo-pills">
+            <button type="button" class="demo-pill" data-fill-login="ivanova" data-fill-pass="buh123">
+              <strong>ivanova</strong> <span>Бухгалтер</span>
+            </button>
+            <button type="button" class="demo-pill" data-fill-login="petrov" data-fill-pass="pass123">
+              <strong>petrov</strong> <span>Сотрудник</span>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Форма регистрации сотрудника -->
+      <form id="register-form" class="auth-form" hidden novalidate>
+        <div class="field">
+          <label for="reg-fullname">ФИО</label>
+          <input id="reg-fullname" name="full_name" type="text" required minlength="3" autocomplete="name" placeholder="Смирнов Алексей Игоревич" data-error="reg-fullname-err">
+          <div id="reg-fullname-err" class="error-msg">Укажите ФИО (минимум 3 символа)</div>
+        </div>
+        <div class="field">
+          <label for="reg-login">Логин</label>
+          <input id="reg-login" name="login" type="text" required minlength="3" autocomplete="username" placeholder="smirnov" data-error="reg-login-err">
+          <div id="reg-login-err" class="error-msg">Придумайте логин (минимум 3 символа)</div>
+        </div>
+        <div class="field">
+          <label for="reg-password">Пароль</label>
+          <input id="reg-password" name="password" type="password" required minlength="4" autocomplete="new-password" placeholder="Минимум 4 символа" data-error="reg-password-err">
+          <div id="reg-password-err" class="error-msg">Пароль должен быть не короче 4 символов</div>
+        </div>
+        <div class="field">
+          <label for="reg-position">Должность</label>
+          <select id="reg-position" name="position_id" required data-error="reg-position-err"></select>
+          <div id="reg-position-err" class="error-msg">Выберите должность</div>
+        </div>
+        <div id="reg-server-error" class="form-alert" hidden></div>
+        <button type="submit" class="btn btn-primary btn-full">Отправить заявку на регистрацию</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Основной интерфейс приложения -->
+  <div id="app-shell" class="app-shell" hidden>
+    <!-- Левый сайдбар -->
+    <aside id="sidebar" class="sidebar" aria-label="Навигация">
+      <div class="sidebar-head">
+        <a href="#overview" class="brand-link" data-nav="overview">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-text">SalaryAccounting</span>
+        </a>
+        <button type="button" id="sidebar-collapse-btn" class="icon-btn hide-mobile" aria-label="Свернуть меню" title="Свернуть меню">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+
+      <div class="sidebar-foot">
+        <div class="tax-badge">
+          <span class="mono">СТАВКА НДФЛ</span>
+          <strong class="mono">13%</strong>
+        </div>
+        <button type="button" id="logout-btn" class="nav-item nav-logout">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+          </svg>
+          <span>Выйти</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Правая часть: шапка + контент -->
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" id="mobile-menu-btn" class="icon-btn show-mobile" aria-label="Открыть меню">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 7h16M4 12h16M4 17h16"/>
+            </svg>
+          </button>
+          <div class="crumbs mono" id="breadcrumbs" aria-label="Навигационная цепочка"></div>
+        </div>
+
+        <div class="xc-head">
+          <button type="button" id="change-pass-btn" class="icon-btn" aria-label="Сменить пароль" title="Сменить пароль">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </button>
+
+          <div class="user-chip">
+            <div class="user-meta">
+              <span class="user-name" id="header-user-name">—</span>
+              <span class="user-role mono" id="header-user-role">—</span>
+            </div>
+            <div class="user-avatar" id="header-user-avatar" aria-hidden="true">АИ</div>
+          </div>
+        </div>
+      </header>
+
+      <main id="main-content" class="main-content"></main>
+    </div>
+  </div>
+
+  <!-- Мобильная шторка-навигация -->
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+
+  <!-- Универсальное модальное окно (нативный <dialog>) -->
+  <dialog id="app-dialog" closedby="any" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <h1 id="dialog-title" class="dialog-title">Заголовок</h1>
+      <button type="button" id="dialog-close-x" class="icon-btn" aria-label="Закрыть окно">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div id="dialog-body" class="dialog-body"></div>
+  </dialog>
+
+  <!-- Toast уведомления -->
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
